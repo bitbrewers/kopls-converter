@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+	<style>
+		html,
+		body,
+		.login-box {
+			height: 100%;
+		}
+	</style>
+
+	<title></title>
+</head>
+
+<body>
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper blue darken-1">
+				<a href="#!" class="brand-logo center">KOPLS Converter</a>
+			</div>
+		</nav>
+	</div>
+
+	<div class="valign-wrapper row login-box">
+		<div class="col card hoverable s10 pull-s1 m6 pull-m3 l4 pull-l4">
+			<form action="/login" method="post">
+				<div class="card-content">
+					<span class="card-title">Kirjaudu sisään</span>
+					<div class="row">
+						<div class="input-field col s12">
+							<label for="user">Käyttäjänimi</label>
+							<input type="text" class="validate" name="user" id="user" />
+						</div>
+						<div class="input-field col s12">
+							<label for="password">Salasana</label>
+							<input type="password" class="validate" name="password" id="password" />
+						</div>
+					</div>
+				</div>
+				<div class="card-action right-align">
+					<input type="submit" class="btn green waves-effect waves-light" value="Kirjaudu">
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+	<title></title>
+</head>
+
+<body>
+
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper blue darken-1">
+				<a href="/" class="brand-logo center">KOPLS Converter</a>
+				<ul class="right">
+					<li>
+						<a href="/variables">Muuttujat</a>
+					</li>
+					<li>
+						<a href="/logout">Ulos</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+	<div class="container">
+
+		<div class="row">
+			<div class="col s12 m1"></div>
+			<div class="col s12 m10">
+				<div class="card">
+					<div class="card-content">
+						<span class="card-title">Ovimallit</span>
+					</div>
+					<form id="doormodels" action="/variables/doormodels">
+						<div class="card-content">
+							{{ range $key, $value := .DoorModels }}
+								<div data-id="{{ $value.ID }}" class="row">
+									<div class="input-field col s4">
+										<input name="Name" type="text" value="{{ $key }}">
+										<label for="Name">Nimi</label>
+									</div>
+									<div class="input-field col s4">
+										<input name="Depth" type="number" value="{{ $value.Depth }}">
+										<label for="Depth">Syvyys</label>
+									</div>
+									<div class="input-field col s4">
+										<input name="Var6" type="number" value="{{ $value.Var6 }}">
+										<label for="Var6">Muutuja</label>
+									</div>
+								</div>
+							{{ end }}
+						</div>
+						<div class="card-content right-align">
+							<input type="submit" class="btn waves-effect waves-light" value="Tallenna">
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col s12 m1"></div>
+		</div>
+		
+		<div class="row">
+			<div class="col s12 m1"></div>
+			<div class="col s12 m10">
+				<div class="card">
+					<form id="hinges" action="/variables/hinges">
+						<div class="card-content">
+							<span class="card-title">Saranat</span>
+						</div>
+						<div class="card-content">
+							{{ range $key, $value := .Hinges }}
+								<div data-id="{{ $value.ID }}" class="row">
+									<div class="input-field col s6">
+										<input name="Barcode" type="text" value="{{ $key | byteToString }}">
+										<label for="Barcode">Viivakoodi</label>
+									</div>
+									<div class="input-field col s6">
+										<input name="Var5" type="number" value="{{ $value.Var5 }}">
+										<label for="Var5">Muutuja</label>
+									</div>
+								</div>
+							{{ end }}
+						</div>
+						<div class="card-content right-align">
+							<input type="submit" class="btn waves-effect waves-light" value="Tallenna">
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col s12 m1"></div>
+		</div>
+
+		<div class="row">
+			<div class="col s12 m1"></div>
+			<div class="col s12 m10">
+				<div class="card">
+					<form id="handednesses" action="/variables/handednesses">
+						<div class="card-content">
+							<span class="card-title">Kätisyys</span>
+						</div>
+						<div class="card-content">
+							{{ range $key, $value := .Handednesses }}
+								<div data-id="{{ $value.ID }}" class="row">
+									<div class="input-field col s6">
+										<input name="Barcode" type="text" value="{{ $key | byteToString }}">
+										<label for="Barcode">Viivakoodi</label>
+									</div>
+									<div class="input-field col s6">
+										<input name="Handedness" type="text" value="{{ $value.Handedness }}">
+										<label for="Handedness">Kävisyys</label>
+									</div>
+								</div>
+							{{ end }}
+						</div>
+						<div class="card-content right-align">
+							<input type="submit" class="btn waves-effect waves-light" value="Tallenna">
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col s12 m1"></div>
+		</div>
+
+		<div class="row">
+			<div class="col s12 m1">
+			</div>
+			<div class="col s12 m10">
+				<div class="card">
+					<form id="handles" action="/variables/handles">
+						<div class="card-content">
+							<span class="card-title">Vedin</span>
+						</div>
+						<div class="card-content">
+							{{ range $key, $value := .Handles }}
+								<div data-id="{{ $value.ID }}" class="row">
+									<div class="input-field col s6">
+										<input name="Barcode" type="text" value="{{ $key | byteToString }}">
+										<label for="Barcode">Viivakoodi</label>
+									</div>
+									<div class="input-field col s6">
+										<input name="Handle" type="number" value="{{ $value.Handle }}">
+										<label for="Handle">Muuttuja</label>
+									</div>
+								</div>
+							{{ end }}
+						</div>
+						<div class="card-content right-align">
+							<input type="submit" class="btn waves-effect waves-light" value="Tallenna">
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col s12 m1"></div>
+		</div>
+
+		<div class="row">
+			<div class="col s12 m1"></div>
+			<div class="col s12 m10">
+				<div class="card">
+					<form id="handlepositions" action="/variables/handlepositions">
+						<div class="card-content">
+							<span class="card-title">Vedinten asennot</span>
+						</div>
+						<div class="card-content">
+							{{ range $key, $value := .HandlePositions }}
+								<div data-id="{{ $value.ID }}" class="row">
+									<div class="input-field col s6">
+										<input name="Barcode" type="text" value="{{ $key | byteToString }}">
+										<label for="Barcode">Viivakoodi</label>
+									</div>
+									<div class="input-field col s6">
+										<input name="Position" type="text" value="{{ $value.Position }}">
+										<label for="Position">Asento</label>
+									</div>
+								</div>
+							{{ end }}
+						</div>
+						<div class="card-content right-align">
+							<input type="submit" class="btn waves-effect waves-light" value="Tallenna">
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col s12 m1"></div>
+		</div>
+
+		<div class="row">
+			<div class="col s12 m1"></div>
+			<div class="col s12 m10">
+				<div class="card">
+					<form id="programs" action="/variables/programs">
+						<div class="card-content">
+							<span class="card-title">Ohjelmat</span>
+						</div>
+						<div class="card-content">
+							{{ range $key, $value := .Programs }}
+								<div data-id="{{ $value.ID }}" class="row">
+									<div class="input-field col s3">
+										<input name="Name" type="text" value="{{ $key }}">
+										<label for="Name">Nimi</label>
+									</div>
+									<div class="input-field col s7">
+										<input name="Program" type="text" value="{{ $value.Program }}">
+										<label for="lasProgramt_name">Ohjelma</label>
+									</div>
+									<div class="input-field col s2">
+										<input name="HingePosition" type="number" step="0.1" value="{{ $value.HingePosition }}">
+										<label for="lasHingePositiont_name">Vetimen reikäväli</label>
+									</div>
+								</div>
+							{{ end }}
+						</div>
+						<div class="card-content right-align">
+							<input type="submit" class="btn waves-effect waves-light" value="Tallenna">
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col s12 m1"></div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			$('#doormodels, #hinges, #handednesses, #handles, #handlepositions, #programs').submit(function(e) {
+				e.preventDefault();
+				var data = []
+				$('.row',$(this)).each(function(i) {
+					var obj = {'ID': i};
+					$('input',$(this)).each(function() {
+						if ($(this).attr('type') === 'number') {
+							if ($(this).attr('step')) {
+								obj[$(this).attr('name')] = parseFloat($(this).val());
+							} else {
+								obj[$(this).attr('name')] = parseInt($(this).val(), 10);
+							}
+						} else {
+							obj[$(this).attr('name')] = $(this).val();							
+						}
+					});
+					data.push(obj)
+				});
+				post($(this).attr('action'), data)
+			});
+
+			function post(url, data) {
+				$.ajax({
+					url: url,
+					type : 'PUT',
+					dataType : 'json',
+					data : JSON.stringify(data),
+					success : function(result) {
+						location.reload();
+					},
+					error: function(xhr, resp, text) {
+						window.alert(text);
+					}
+				})
+			};
+		});
+
+	</script>
+</body>
+
+</html>
