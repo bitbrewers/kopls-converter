@@ -205,6 +205,30 @@ func (c *Client) UpdateHandles(rows []Handle) (err error) {
 	return tx.Commit()
 }
 
+func (c *Client) AddHandlePositions(row *HandlePosition) (err error) {
+	return c.dbmap.Insert(row)
+}
+
+func (c *Client) AddHandednesses(row *Handedness) (err error) {
+	return c.dbmap.Insert(row)
+}
+
+func (c *Client) AddProgram(row *Program) (err error) {
+	return c.dbmap.Insert(row)
+}
+
+func (c *Client) AddDoorModels(row *DoorModel) (err error) {
+	return c.dbmap.Insert(row)
+}
+
+func (c *Client) AddHinges(row *Hinge) (err error) {
+	return c.dbmap.Insert(row)
+}
+
+func (c *Client) AddHandles(row *Handle) (err error) {
+	return c.dbmap.Insert(row)
+}
+
 func (c *Client) GetPrograms() (programs map[string]Program, err error) {
 	var rows *sql.Rows
 	if rows, err = c.db.Query("SELECT name, id, program, hinge_position FROM programs WHERE program NOTNULL AND hinge_position NOTNULL ORDER BY name"); err != nil {

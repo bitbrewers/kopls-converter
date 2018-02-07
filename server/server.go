@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -61,6 +60,13 @@ func (s *Server) Start() error {
 		authorized.PUT("/variables/handednesses", s.setHandednesses)
 		authorized.PUT("/variables/handles", s.setHandles)
 		authorized.PUT("/variables/handlepositions", s.setHandlePositions)
+
+		authorized.POST("/variables/programs", s.addPrograms)
+		authorized.POST("/variables/doormodels", s.addDoorModels)
+		authorized.POST("/variables/hinges", s.addHinges)
+		authorized.POST("/variables/handednesses", s.addHandednesses)
+		authorized.POST("/variables/handles", s.addHandles)
+		authorized.POST("/variables/handlepositions", s.addHandlePositions)
 	}
 
 	return router.Run(s.addr)
@@ -117,7 +123,6 @@ func (s *Server) setPrograms(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("%+v\n", data)
 	if err := s.storage.UpdateProgram(data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -133,7 +138,6 @@ func (s *Server) setDoorModels(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("%+v\n", models)
 	if err := s.storage.UpdateDoorModels(models); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -149,7 +153,6 @@ func (s *Server) setHinges(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("%+v\n", data)
 	if err := s.storage.UpdateHinges(data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -165,7 +168,6 @@ func (s *Server) setHandednesses(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("%+v\n", data)
 	if err := s.storage.UpdateHandednesses(data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -181,7 +183,6 @@ func (s *Server) setHandles(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("%+v\n", data)
 	if err := s.storage.UpdateHandles(data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -197,8 +198,97 @@ func (s *Server) setHandlePositions(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("%+v\n", data)
 	if err := s.storage.UpdateHandlePositions(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
+}
+
+func (s *Server) addPrograms(c *gin.Context) {
+	data := &Program{}
+	if err := c.ShouldBindJSON(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := s.storage.AddProgram(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
+}
+
+func (s *Server) addDoorModels(c *gin.Context) {
+	data := &DoorModel{}
+	if err := c.ShouldBindJSON(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := s.storage.AddDoorModels(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
+}
+
+func (s *Server) addHinges(c *gin.Context) {
+	data := &Hinge{}
+	if err := c.ShouldBindJSON(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := s.storage.AddHinges(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
+}
+
+func (s *Server) addHandednesses(c *gin.Context) {
+	data := &Handedness{}
+	if err := c.ShouldBindJSON(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := s.storage.AddHandednesses(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
+}
+
+func (s *Server) addHandles(c *gin.Context) {
+	data := &Handle{}
+	if err := c.ShouldBindJSON(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := s.storage.AddHandles(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
+}
+
+func (s *Server) addHandlePositions(c *gin.Context) {
+	data := &HandlePosition{}
+	if err := c.ShouldBindJSON(data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := s.storage.AddHandlePositions(data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
