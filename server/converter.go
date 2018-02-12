@@ -122,9 +122,17 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 		// Length, height, thicknes
 		row[12] = cols[7]
 		row[13] = cols[8]
-		row[14] = "16"
 
-		// Ohjelma koodi
+		// Door model
+		if dm, ok := cData.DoorModels[cols[4]]; ok {
+			row[44] += fmt.Sprintf("#7=%d", dm.Var6)
+			row[14] = fmt.Sprintf("%d", dm.Depth)
+		} else {
+			log.Println("Could not found doormodel for:", cols[4], rawRow)
+			row[2] += "OM "
+		}
+
+		// Program code
 		if prog, ok := cData.Programs[cols[5]]; ok {
 			row[1] = prog.Program
 			row[43] += fmt.Sprintf("#6=%.1f", prog.HingePosition)
