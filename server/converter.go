@@ -120,8 +120,8 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 		}
 
 		// Length, height, thicknes
-		row[12] = cols[8]
-		row[13] = cols[7]
+		row[12] = cols[7]
+		row[13] = cols[8]
 		row[14] = "16"
 
 		// Ohjelma koodi
