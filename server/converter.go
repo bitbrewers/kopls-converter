@@ -161,28 +161,28 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 				barcode := cols[i]
 
 				if sarana, ok := cData.Hinges[barcode[6]]; ok {
-					newRow[39] = fmt.Sprintf("#2=%d", sarana)
+					newRow[39] = fmt.Sprintf("#2=%d", sarana.Var5)
 				} else {
 					log.Println("Saranointia ei löytynyt:", string(barcode[6]), barcode, rawRow)
 					newRow[2] += "S "
 				}
 
 				if katisyys, ok := cData.Handednesses[barcode[5]]; ok {
-					newRow[40] = fmt.Sprintf("#3=%s", katisyys)
+					newRow[40] = fmt.Sprintf("#3=%s", katisyys.Handedness)
 				} else {
 					log.Println("Kätisyyttä ei löytynyt:", string(barcode[5]), barcode, rawRow)
 					newRow[2] += "K "
 				}
 
 				if vedin, ok := cData.Handles[barcode[7]]; ok {
-					newRow[41] = fmt.Sprintf("#4=%d", vedin)
+					newRow[41] = fmt.Sprintf("#4=%d", vedin.Handle)
 				} else {
 					log.Println("Reikäväliä ei löytynyt:", string(barcode[7]), barcode, rawRow)
 					newRow[2] += "R "
 				}
 
 				if asento, ok := cData.HandlePositions[barcode[8]]; ok {
-					newRow[42] = fmt.Sprintf("#5=%s", asento)
+					newRow[42] = fmt.Sprintf("#5=%s", asento.Position)
 				} else {
 					log.Println("Vetimen asentoa ei löytynyt:", string(barcode[8]), barcode, rawRow)
 					newRow[2] += "V "
