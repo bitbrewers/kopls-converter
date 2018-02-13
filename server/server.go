@@ -106,11 +106,11 @@ func (s *Server) handleConversion(c *gin.Context) {
 		return
 	}
 
-	name := strings.Replace(fileHeader.Filename, ".csv", ".lsc", 1)
+	name := strings.Replace(fileHeader.Filename, ".csv", ".zip", 1)
 	c.Header("Content-Disposition", "attachment; filename="+name)
 	c.Header("Content-Type", "text/plain")
 
-	if _, err := c.Writer.Write(result); err != nil {
+	if _, err := c.Writer.Write(result.Bytes()); err != nil {
 		log.Println(err)
 		return
 	}

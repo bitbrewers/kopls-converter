@@ -1,7 +1,9 @@
 package server
 
 import (
+	"archive/zip"
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -62,18 +64,22 @@ import (
 
 */
 
-func Convert(r io.Reader, db *Client) ([]byte, error) {
+func Convert(r io.Reader, db *Client) (*bytes.Buffer, error) {
 	cData, err := db.GetAll()
 	if err != nil {
 		return nil, err
 	}
 
-	result := `TPA\ALBATROS\CNC2000`
+	buf := bytes.NewBuffer(make([]byte, 0))
+	zipWriter := zip.NewWriter(buf)
+
 	scanner := bufio.NewScanner(r)
 
 	// scan header line
 	scanner.Scan()
 
+	var w io.Writer
+	var order, result string
 	// Convert data row by row
 	for scanner.Scan() {
 		rawRow := scanner.Text()
@@ -109,15 +115,36 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 			row[31+i] = fmt.Sprintf("#%d=", i)
 		}
 
+		cols := strings.Split(rawRow, ";")
+		if len(cols) != 29 {
+			log.Println("Invalid amount of cols:", len(cols), rawRow)
+			continue
+		}
+
 		finish := func(readyRow []string) {
 			result += "\r\n"
 			result += strings.Join(readyRow, ";")
 		}
 
-		cols := strings.Split(rawRow, ";")
-		if len(cols) != 29 {
-			log.Println("Invalid amount of cols:", len(cols), rawRow)
-			finish(row)
+		// New ordernumber
+		if cols[3] != "" && cols[3] != order {
+			if w != nil {
+				// Finish order file
+				result += "\r\n;;;;0;0;0;;0;0;0;0;;;;0;0;;0;;0;0;;;;;;;;;;;;;;;;;;;;;;;;;\r\n"
+				result += "$=\r\n"
+				w.Write([]byte(result))
+			}
+
+			result = `TPA\ALBATROS\CNC2000`
+			order = cols[3]
+			if w, err = zipWriter.Create(order + ".lsc"); err != nil {
+				return nil, err
+			}
+		}
+
+		// Make sure we have order to write
+		if w == nil {
+			log.Println("Row without order:", rawRow)
 			continue
 		}
 
@@ -132,7 +159,7 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 			row[2] = cols[4]
 		} else {
 			log.Println("Could not found doormodel for:", cols[4], rawRow)
-			row[2] = "EI OVIMALLIA"
+			row[2] += " OM"
 		}
 
 		// Program code
@@ -141,7 +168,7 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 			row[43] += fmt.Sprintf("#5=%.1f", prog.HingePosition)
 		} else {
 			log.Println("Could not found program for:", cols[5], rawRow)
-			row[2] += "O "
+			row[2] += " O"
 		}
 
 		// Loop each possible barcode position from row
@@ -160,14 +187,17 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 			amount, err := strconv.Atoi(cols[i-1])
 			if err != nil {
 				log.Println("Invalid number of pieces:", err)
+				newRow[2] += " KPL"
 			} else {
 				newRow[4] = strconv.Itoa(amount)
 			}
 
 			if cols[i+1] != "" {
 				log.Println("Excluded barcode", cols[i], rawRow)
+				newRow[2] += " B!"
 			} else if len(cols[i]) != 10 {
 				log.Println("Invalid lenght barcode", len(cols[i]), cols[i], rawRow)
+				newRow[2] += " BL"
 			} else {
 				barcode := cols[i]
 
@@ -175,24 +205,28 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 					newRow[39] = fmt.Sprintf("#1=%d", sarana.Var5)
 				} else {
 					log.Println("Saranointia ei löytynyt:", string(barcode[6]), barcode, rawRow)
+					newRow[2] += " S"
 				}
 
 				if katisyys, ok := cData.Handednesses[barcode[5]]; ok {
 					newRow[40] = fmt.Sprintf("#2=%s", katisyys.Handedness)
 				} else {
 					log.Println("Kätisyyttä ei löytynyt:", string(barcode[5]), barcode, rawRow)
+					newRow[2] += " K"
 				}
 
 				if vedin, ok := cData.Handles[barcode[7]]; ok {
 					newRow[41] = fmt.Sprintf("#3=%d", vedin.Handle)
 				} else {
 					log.Println("Reikäväliä ei löytynyt:", string(barcode[7]), barcode, rawRow)
+					newRow[2] += " R"
 				}
 
 				if asento, ok := cData.HandlePositions[barcode[8]]; ok {
 					newRow[42] = fmt.Sprintf("#4=%s", asento.Position)
 				} else {
 					log.Println("Vetimen asentoa ei löytynyt:", string(barcode[8]), barcode, rawRow)
+					newRow[2] += " V"
 				}
 			}
 			finish(newRow)
@@ -200,11 +234,12 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 
 		if !found {
 			log.Println("No barcode found for row:", rawRow)
+			row[2] += " B"
 			finish(row)
 		}
 	}
-	result += "\r\n;;;;0;0;0;;0;0;0;0;;;;0;0;;0;;0;0;;;;;;;;;;;;;;;;;;;;;;;;;\r\n"
-	result += "$=\r\n"
 
-	return []byte(result), nil
+	zipWriter.Flush()
+	zipWriter.Close()
+	return buf, nil
 }
