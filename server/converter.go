@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strconv"
 	"strings"
 )
 
@@ -142,6 +143,8 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 			row[2] += "O "
 		}
 
+		// Loop each possible barcode position from row
+		// and create row per barcode in result set
 		found := false
 		for _, i := range []int{11, 17, 22, 27} {
 			if cols[i] == "" {
@@ -151,6 +154,15 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 			found = true
 			newRow := make([]string, len(row))
 			copy(newRow, row)
+
+			// Parse number of pieces
+			amount, err := strconv.Atoi(cols[i-1])
+			if err != nil {
+				log.Println("Invalid number of pieces:", err)
+				newRow[2] += "M "
+			} else {
+				newRow[4] = strconv.Itoa(amount)
+			}
 
 			if cols[i+1] != "" {
 				log.Println("Excluded barcode", cols[i], rawRow)
