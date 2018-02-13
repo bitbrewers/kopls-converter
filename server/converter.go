@@ -129,9 +129,10 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 		if dm, ok := cData.DoorModels[cols[4]]; ok {
 			row[44] += fmt.Sprintf("#6=%d", dm.Var6)
 			row[14] = fmt.Sprintf("%d", dm.Depth)
+			row[2] = cols[4]
 		} else {
 			log.Println("Could not found doormodel for:", cols[4], rawRow)
-			row[2] += "OM "
+			row[2] = "EI OVIMALLIA"
 		}
 
 		// Program code
@@ -159,17 +160,14 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 			amount, err := strconv.Atoi(cols[i-1])
 			if err != nil {
 				log.Println("Invalid number of pieces:", err)
-				newRow[2] += "M "
 			} else {
 				newRow[4] = strconv.Itoa(amount)
 			}
 
 			if cols[i+1] != "" {
 				log.Println("Excluded barcode", cols[i], rawRow)
-				newRow[2] += "B! "
 			} else if len(cols[i]) != 10 {
 				log.Println("Invalid lenght barcode", len(cols[i]), cols[i], rawRow)
-				newRow[2] += "BL "
 			} else {
 				barcode := cols[i]
 
@@ -177,28 +175,24 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 					newRow[39] = fmt.Sprintf("#1=%d", sarana.Var5)
 				} else {
 					log.Println("Saranointia ei löytynyt:", string(barcode[6]), barcode, rawRow)
-					newRow[2] += "S "
 				}
 
 				if katisyys, ok := cData.Handednesses[barcode[5]]; ok {
 					newRow[40] = fmt.Sprintf("#2=%s", katisyys.Handedness)
 				} else {
 					log.Println("Kätisyyttä ei löytynyt:", string(barcode[5]), barcode, rawRow)
-					newRow[2] += "K "
 				}
 
 				if vedin, ok := cData.Handles[barcode[7]]; ok {
 					newRow[41] = fmt.Sprintf("#3=%d", vedin.Handle)
 				} else {
 					log.Println("Reikäväliä ei löytynyt:", string(barcode[7]), barcode, rawRow)
-					newRow[2] += "R "
 				}
 
 				if asento, ok := cData.HandlePositions[barcode[8]]; ok {
 					newRow[42] = fmt.Sprintf("#4=%s", asento.Position)
 				} else {
 					log.Println("Vetimen asentoa ei löytynyt:", string(barcode[8]), barcode, rawRow)
-					newRow[2] += "V "
 				}
 			}
 			finish(newRow)
@@ -206,7 +200,6 @@ func Convert(r io.Reader, db *Client) ([]byte, error) {
 
 		if !found {
 			log.Println("No barcode found for row:", rawRow)
-			row[2] += "E "
 			finish(row)
 		}
 	}
