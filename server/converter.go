@@ -121,9 +121,11 @@ func Convert(r io.Reader, db *Client) (*bytes.Buffer, error) {
 			continue
 		}
 
-		finish := func(readyRow []string) {
-			result += "\r\n"
-			result += strings.Join(readyRow, ";")
+		finish := func(readyRow []string, amount int) {
+			for i := 0; i < amount; i++ {
+				result += "\r\n"
+				result += strings.Join(readyRow, ";")
+			}
 		}
 
 		// New ordernumber
@@ -155,7 +157,7 @@ func Convert(r io.Reader, db *Client) (*bytes.Buffer, error) {
 		// Door model
 		if dm, ok := cData.DoorModels[cols[4]]; ok {
 			row[44] += fmt.Sprintf("#6=%d", dm.Var6)
-			row[14] = fmt.Sprintf("%d", dm.Depth)
+			row[14] = fmt.Sprintf("%.1f", dm.Depth)
 			row[2] = cols[4]
 		} else {
 			log.Println("Could not found doormodel for:", cols[4], rawRow)
@@ -188,8 +190,7 @@ func Convert(r io.Reader, db *Client) (*bytes.Buffer, error) {
 			if err != nil {
 				log.Println("Invalid number of pieces:", err)
 				newRow[2] += " KPL"
-			} else {
-				newRow[4] = strconv.Itoa(amount)
+				amount = 1
 			}
 
 			if cols[i+1] != "" {
@@ -204,39 +205,47 @@ func Convert(r io.Reader, db *Client) (*bytes.Buffer, error) {
 				if sarana, ok := cData.Hinges[barcode[6]]; ok {
 					newRow[39] = fmt.Sprintf("#1=%d", sarana.Var5)
 				} else {
-					log.Println("Saranointia ei löytynyt:", string(barcode[6]), barcode, rawRow)
+					log.Println("No hinges found:", string(barcode[6]), barcode, rawRow)
 					newRow[2] += " S"
 				}
 
 				if katisyys, ok := cData.Handednesses[barcode[5]]; ok {
 					newRow[40] = fmt.Sprintf("#2=%s", katisyys.Handedness)
 				} else {
-					log.Println("Kätisyyttä ei löytynyt:", string(barcode[5]), barcode, rawRow)
+					log.Println("No handednesses found:", string(barcode[5]), barcode, rawRow)
 					newRow[2] += " K"
 				}
 
 				if vedin, ok := cData.Handles[barcode[7]]; ok {
 					newRow[41] = fmt.Sprintf("#3=%d", vedin.Handle)
 				} else {
-					log.Println("Reikäväliä ei löytynyt:", string(barcode[7]), barcode, rawRow)
+					log.Println("No handles found:", string(barcode[7]), barcode, rawRow)
 					newRow[2] += " R"
 				}
 
 				if asento, ok := cData.HandlePositions[barcode[8]]; ok {
 					newRow[42] = fmt.Sprintf("#4=%s", asento.Position)
 				} else {
-					log.Println("Vetimen asentoa ei löytynyt:", string(barcode[8]), barcode, rawRow)
+					log.Println("No handle position found:", string(barcode[8]), barcode, rawRow)
 					newRow[2] += " V"
 				}
 			}
-			finish(newRow)
+			finish(newRow, amount)
 		}
 
 		if !found {
 			log.Println("No barcode found for row:", rawRow)
 			row[2] += " B"
-			finish(row)
+			finish(row, 1)
 		}
+	}
+
+	// Write last result set
+	if w != nil {
+		// Finish order file
+		result += "\r\n;;;;0;0;0;;0;0;0;0;;;;0;0;;0;;0;0;;;;;;;;;;;;;;;;;;;;;;;;;\r\n"
+		result += "$=\r\n"
+		w.Write([]byte(result))
 	}
 
 	zipWriter.Flush()

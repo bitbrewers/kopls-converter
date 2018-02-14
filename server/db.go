@@ -34,10 +34,10 @@ type Program struct {
 }
 
 type DoorModel struct {
-	ID    int64  `db:"id"`
-	Name  string `db:"name"`
-	Depth int    `db:"depth"`
-	Var6  int    `db:"variable"`
+	ID    int64   `db:"id"`
+	Name  string  `db:"name"`
+	Depth float64 `db:"depth"`
+	Var6  int     `db:"variable"`
 }
 
 type Hinge struct {

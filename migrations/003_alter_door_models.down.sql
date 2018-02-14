@@ -1,0 +1,2 @@
+ALTER TABLE door_models
+ALTER COLUMN depth TYPE INTEGER;
