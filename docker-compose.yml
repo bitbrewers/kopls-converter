@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:10
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=kopls
+      - POSTGRES_PASSWORD=kopls
+
+  kopls:
+    build:
+      context: .
+    restart: always
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      - PORT=8000
+      - DATABASE_URL=postgres://kopls:kopls@db:5432/kopls
+      - ADMIN_USER=user
+      - ADMIN_PASSWD=passwd
+      - DOMAIN=localhost

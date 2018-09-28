@@ -87,7 +87,7 @@ func Convert(r io.Reader, db *Client) (*bytes.Buffer, error) {
 			continue
 		}
 
-		row := make([]string, 47)
+		row := make([]string, 49)
 
 		// Add defaults
 		row[3] = "N"
@@ -156,7 +156,8 @@ func Convert(r io.Reader, db *Client) (*bytes.Buffer, error) {
 
 		// Door model
 		if dm, ok := cData.DoorModels[cols[4]]; ok {
-			row[44] += fmt.Sprintf("#6=%d", dm.Var6)
+			row[46] += fmt.Sprintf("#12=%d", dm.SlatePosition)
+			row[44] += fmt.Sprintf("#6=%d", dm.Stopper)
 			row[14] = fmt.Sprintf("%.1f", dm.Depth)
 			row[2] = cols[4]
 		} else {
@@ -168,6 +169,7 @@ func Convert(r io.Reader, db *Client) (*bytes.Buffer, error) {
 		if prog, ok := cData.Programs[cols[5]]; ok {
 			row[1] = prog.Program
 			row[43] += fmt.Sprintf("#5=%.1f", prog.HingePosition)
+			row[45] += fmt.Sprintf("#11=%d", prog.SlateHinge)
 		} else {
 			log.Println("Could not found program for:", cols[5], rawRow)
 			row[2] += " O"
