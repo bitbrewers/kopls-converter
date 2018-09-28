@@ -16,3 +16,5 @@
 data
 tmp
 dump.sql
+builds
+vendor

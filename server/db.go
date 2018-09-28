@@ -31,13 +31,15 @@ type Program struct {
 	Name          string  `db:"name"`
 	Program       string  `db:"program"`
 	HingePosition float64 `db:"hinge_position"`
+	SlateHinge    int     `db:"slate_hinge"`
 }
 
 type DoorModel struct {
-	ID    int64   `db:"id"`
-	Name  string  `db:"name"`
-	Depth float64 `db:"depth"`
-	Var6  int     `db:"variable"`
+	ID            int64   `db:"id"`
+	Name          string  `db:"name"`
+	Depth         float64 `db:"depth"`
+	Stopper       int     `db:"stopper"`
+	SlatePosition int     `db:"slate_position"`
 }
 
 type Hinge struct {
@@ -231,7 +233,7 @@ func (c *Client) AddHandles(row *Handle) (err error) {
 
 func (c *Client) GetPrograms() (programs map[string]Program, err error) {
 	var rows *sql.Rows
-	if rows, err = c.db.Query("SELECT name, id, program, hinge_position FROM programs WHERE program NOTNULL AND hinge_position NOTNULL ORDER BY name"); err != nil {
+	if rows, err = c.db.Query("SELECT name, id, program, hinge_position, slate_hinge FROM programs WHERE program NOTNULL AND hinge_position NOTNULL ORDER BY name"); err != nil {
 		return
 	}
 	defer rows.Close()
@@ -240,7 +242,7 @@ func (c *Client) GetPrograms() (programs map[string]Program, err error) {
 	for rows.Next() {
 		name := ""
 		pd := Program{}
-		if err = rows.Scan(&name, &pd.ID, &pd.Program, &pd.HingePosition); err != nil {
+		if err = rows.Scan(&name, &pd.ID, &pd.Program, &pd.HingePosition, &pd.SlateHinge); err != nil {
 			return
 		}
 		programs[name] = pd
@@ -254,7 +256,7 @@ func (c *Client) GetPrograms() (programs map[string]Program, err error) {
 
 func (c *Client) GetDoorModels() (doorModels map[string]DoorModel, err error) {
 	var rows *sql.Rows
-	if rows, err = c.db.Query("SELECT name, id, depth, variable FROM door_models WHERE depth NOTNULL AND variable NOTNULL ORDER BY name"); err != nil {
+	if rows, err = c.db.Query("SELECT name, id, depth, stopper, slate_position FROM door_models WHERE depth NOTNULL AND stopper NOTNULL ORDER BY name"); err != nil {
 		return
 	}
 	defer rows.Close()
@@ -263,7 +265,7 @@ func (c *Client) GetDoorModels() (doorModels map[string]DoorModel, err error) {
 	for rows.Next() {
 		name := ""
 		dm := DoorModel{}
-		if err = rows.Scan(&name, &dm.ID, &dm.Depth, &dm.Var6); err != nil {
+		if err = rows.Scan(&name, &dm.ID, &dm.Depth, &dm.Stopper, &dm.SlatePosition); err != nil {
 			return
 		}
 		doorModels[name] = dm

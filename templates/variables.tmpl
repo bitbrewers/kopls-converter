@@ -39,17 +39,21 @@
 						<div class="card-content">
 							{{ range $key, $value := .DoorModels }}
 								<div data-id="{{ $value.ID }}" class="row">
-									<div class="input-field col s4">
+									<div class="input-field col s3">
 										<input name="Name" type="text" value="{{ $key }}">
 										<label for="Name">Nimi</label>
 									</div>
-									<div class="input-field col s4">
+									<div class="input-field col s3">
 										<input name="Depth" type="number" step="0.1" value="{{ $value.Depth }}">
 										<label for="Depth">Syvyys</label>
 									</div>
-									<div class="input-field col s4">
-										<input name="Var6" type="number" value="{{ $value.Var6 }}">
-										<label for="Var6">Muutuja</label>
+									<div class="input-field col s3">
+										<input name="Stopper" type="number" value="{{ $value.Stopper }}">
+										<label for="Stopper">Stoppari</label>
+									</div>
+									<div class="input-field col s3">
+										<input name="SlatePosition" type="number" value="{{ $value.SlatePosition }}">
+										<label for="SlatePosition">Lista Ylös/Alas</label>
 									</div>
 								</div>
 							{{ end }}
@@ -61,17 +65,21 @@
 					<form id="new-doormodels" action="/variables/doormodels">
 						<div class="card-content">
 							<div data-id="0" class="row">
-								<div class="input-field col s4">
+								<div class="input-field col s3">
 									<input name="Name" type="text">
 									<label for="Name">Nimi</label>
 								</div>
-								<div class="input-field col s4">
+								<div class="input-field col s3">
 									<input name="Depth" step="0.1"  type="number">
 									<label for="Depth">Syvyys</label>
 								</div>
-								<div class="input-field col s4">
-									<input name="Var6" type="number">
-									<label for="Var6">Muutuja</label>
+								<div class="input-field col s3">
+									<input name="Stopper" type="number">
+									<label for="Stopper">Stoppari</label>
+								</div>
+								<div class="input-field col s3">
+									<input name="SlatePosition" type="number" step="1">
+									<label for="SlatePosition">Lista Ylös/Alas</label>
 								</div>
 							</div>
 						</div>
@@ -83,7 +91,7 @@
 			</div>
 			<div class="col s12 m1"></div>
 		</div>
-		
+
 		<div class="row">
 			<div class="col s12 m1"></div>
 			<div class="col s12 m10">
@@ -288,17 +296,21 @@
 						<div class="card-content">
 							{{ range $key, $value := .Programs }}
 								<div data-id="{{ $value.ID }}" class="row">
-									<div class="input-field col s3">
+									<div class="input-field col s2">
 										<input name="Name" type="text" value="{{ $key }}">
 										<label for="Name">Nimi</label>
 									</div>
-									<div class="input-field col s7">
+									<div class="input-field col s6">
 										<input name="Program" type="text" value="{{ $value.Program }}">
-										<label for="lasProgramt_name">Ohjelma</label>
+										<label for="Program">Ohjelma</label>
 									</div>
 									<div class="input-field col s2">
 										<input name="HingePosition" type="number" step="0.1" value="{{ $value.HingePosition }}">
-										<label for="lasHingePositiont_name">Vetimen reikäväli</label>
+										<label for="HingePosition">Vetimen reikäväli</label>
+									</div>
+									<div class="input-field col s2">
+										<input name="SlateHinge" type="number" step="0.1" value="{{ $value.SlateHinge }}">
+										<label for="SlateHinge">Vetimen reikäväli</label>
 									</div>
 								</div>
 							{{ end }}
@@ -310,17 +322,21 @@
 					<form id="new-programs" action="/variables/programs">
 						<div class="card-content">
 							<div data-id="0" class="row">
-								<div class="input-field col s3">
+								<div class="input-field col s2">
 									<input name="Name" type="text">
 									<label for="Name">Nimi</label>
 								</div>
-								<div class="input-field col s7">
+								<div class="input-field col s6">
 									<input name="Program" type="text">
-									<label for="lasProgramt_name">Ohjelma</label>
+									<label for="Program">Ohjelma</label>
 								</div>
 								<div class="input-field col s2">
 									<input name="HingePosition" type="number" step="0.1">
-									<label for="lasHingePositiont_name">Vetimen reikäväli</label>
+									<label for="HingePosition">Vetimen reikäväli</label>
+								</div>
+								<div class="input-field col s2">
+									<input name="SlateHinge" type="number" step="1">
+									<label for="SlateHinge">Vetimen reikäväli</label>
 								</div>
 							</div>
 						</div>

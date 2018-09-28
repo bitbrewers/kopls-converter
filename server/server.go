@@ -79,6 +79,7 @@ func (s *Server) renderIndex(c *gin.Context) {
 func (s *Server) renderVariables(c *gin.Context) {
 	cData, err := s.storage.GetAll()
 	if err != nil {
+		log.Println(err)
 		return
 	}
 
